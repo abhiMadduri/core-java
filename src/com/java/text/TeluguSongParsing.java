@@ -32,6 +32,9 @@ public class TeluguSongParsing {
         JSONParser parser = new JSONParser();
         long id = 0;
         RandomAccessFile f = null;
+        String title_en = "";
+        String title_tel = "";
+
         try {     
              f = new RandomAccessFile(new File(path), "rw");
             //BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(path), StandardCharsets.UTF_8));
@@ -48,7 +51,14 @@ public class TeluguSongParsing {
         }
         
         try {
+            boolean readFirstLine = true;
             for(String str : Files.readAllLines(Paths.get(engFilePath))) {
+                if (readFirstLine) {
+                    String firstLine = str;
+                    String[] split = firstLine.split(" ");
+                    title_en = split[0] + " " + split [1];
+                    readFirstLine = false;
+                }
                 engSongBuilder.append(str).append("\n");
             }
         } catch (IOException e1) {
@@ -56,7 +66,14 @@ public class TeluguSongParsing {
             e1.printStackTrace();
         }
         try {
+            boolean readFirstLine = true;
             for(String str : Files.readAllLines(Paths.get(telFilePath), StandardCharsets.UTF_8)) {
+                if (readFirstLine) {
+                    String firstLine = str;
+                    String[] split = firstLine.split(" ");
+                    title_tel = split[0] + " " + split [1];
+                    readFirstLine = false;
+                }
                 telSongBuilder.append(str).append("\n");
             }
         } catch (IOException e1) {
@@ -67,11 +84,14 @@ public class TeluguSongParsing {
         Map map = new LinkedHashMap<>();
         
         if (!engSongBuilder.toString().isEmpty()) {
-            map.put("id", ++id);
-            map.put("title", "O Sadbhaktulaaraa");
+            map.put("id", 54);
+            map.put("title", title_en);
+            map.put("title_en", title_en);
             map.put("lyrics_en", engSongBuilder.toString());
             if (!telSongBuilder.toString().isEmpty()) {
+                map.put("title_tel", title_tel);
                 map.put("lyrics_tel", telSongBuilder.toString());
+                
             }
             map.put("video_links", "");
         }
